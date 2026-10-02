@@ -42,7 +42,7 @@ BASE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#0F1B2D;--paper:#EDF0F3;--line:#D9DEE5;--mu:#5B6778;--teal:#0E8F86;--teal2:#0A6B64;--tag:#FFD23F;
+:root{--ink:#0F1B2D;--paper:#EDF0F3;--line:#D9DEE5;--mu:#5B6778;--teal:#0E8F86;--teal2:#0A6B64;--tag:#CFEDE9;
 --hd:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;--bd:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 var(--bd)}
@@ -82,7 +82,7 @@ textarea{min-height:120px;resize:vertical}
 .tagfield{background:var(--tag);border-radius:8px 22px 22px 8px;padding:14px 18px 16px 22px;position:relative}
 .tagfield:before{content:"";position:absolute;left:8px;top:50%;width:8px;height:8px;margin-top:-4px;border-radius:50%;background:var(--paper)}
 .tagfield label{margin-left:4px}
-.tagfield input{background:#FFF8D6;border-color:#E9BC0F;font:800 22px var(--hd);letter-spacing:.03em;border-radius:8px}
+.tagfield input{background:#fff;border-color:#9FD6CF;font:800 22px var(--hd);letter-spacing:.03em;border-radius:8px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
 .chip{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:6px 13px;font:500 14px var(--bd);cursor:pointer;color:var(--ink)}
 .chip:hover{border-color:var(--teal);color:var(--teal2)}
@@ -157,22 +157,18 @@ fmt = lambda ts: time.strftime("%d %b %Y, %H:%M", time.gmtime(ts)) + " UTC"
 FORM = """<div class="bar"><a class="logo" href="/"><i>HD</i>Help Desk</a></div>
 <main class="u"><div class="intro"><h1>Something wrong with your PC?</h1>
 <p class="lead">Tell us what happened. Our team picks it up and fixes it.</p>
-<ul class="track"><li class="now"><b>You send the request</b><span>Takes about a minute</span></li>
-<li><b>We open it</b><span>Your request is marked as seen</span></li><li><b>We fix it</b><span>Usually the same day</span></li></ul></div>
+</div>
 <form class="sheet" method="post"><h2>New request</h2>
 {% if err %}<div class="err">{{err}}</div>{% endif %}
 <div class="f tagfield"><label for="pc">PC number</label><input id="pc" name="pc" value="{{v.pc}}" placeholder="PC-12" required autocomplete="off"></div>
 <div class="f"><label for="nm">Your name</label><input id="nm" name="name" value="{{v.name}}" placeholder="e.g. Ali Khan" required></div>
 <div class="f"><label for="ds">What is the problem?</label>
-<div class="chips">{% for c in ["Won't turn on","No internet","Very slow","Printer problem","Can't log in","Screen or keyboard"] %}<button type="button" class="chip">{{c}}</button>{% endfor %}</div>
+
 <textarea id="ds" name="description" placeholder="Describe what you see or what happens..." required>{{v.description}}</textarea></div>
 <div class="f"><label class="shotbox" for="file"><span class="ic" id="ic">📷</span><span><b id="sb">Add a photo or screenshot</b><span class="m">Optional. It helps us fix things faster.</span></span>
 <input type="file" id="file" accept="image/*"></label><button type="button" class="rm" id="rm">Remove photo</button></div>
 <input type="hidden" name="image" id="img"><button class="btn big">Send request</button></form></main>
 <script>
-var d=document.getElementById("ds");
-document.querySelectorAll(".chip").forEach(function(c){c.onclick=function(){var t=c.textContent;
-if(d.value.indexOf(t)>-1)return;d.value=d.value.trim()?d.value.trim()+". "+t:t;d.focus();};});
 var file=document.getElementById("file"),img=document.getElementById("img"),ic=document.getElementById("ic"),sb=document.getElementById("sb"),rm=document.getElementById("rm");
 file.onchange=function(){var f=file.files[0];if(!f)return;var r=new FileReader();
 r.onload=function(e){var im=new Image();im.onload=function(){var s=Math.min(1,1100/Math.max(im.width,im.height)),c=document.createElement("canvas");
