@@ -102,11 +102,14 @@ textarea{min-height:120px;resize:vertical}
 .ticket .bot{padding:24px 28px 30px}.ticket .bot h3{font-size:18px;margin-bottom:16px}
 
 /* ---------- staff side ---------- */
-.app{display:grid;grid-template-columns:minmax(300px,380px) 1fr;height:calc(100vh - 57px);min-height:480px}
-.list{background:#fff;border-right:1px solid var(--line);overflow:auto;display:flex;flex-direction:column}
-.tabs{display:flex;gap:6px;padding:12px;overflow-x:auto;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;z-index:2}
-.tabs a{flex:none;text-decoration:none;font-size:13.5px;font-weight:600;padding:6px 12px;border-radius:99px;color:var(--mu);background:var(--paper)}
-.tabs a.on{background:var(--ink);color:#fff}.tabs a em{font-style:normal;opacity:.65;margin-left:4px}
+.app{display:grid;grid-template-columns:210px minmax(290px,370px) 1fr;height:calc(100vh - 57px);min-height:480px}
+.list{background:#fff;border-right:1px solid var(--line);overflow:auto}
+.side{background:#F7F9FB;border-right:1px solid var(--line);padding:18px 12px;overflow:auto}
+.side h4{margin:0 10px 10px;font:600 13px var(--bd);color:var(--mu)}
+.side a{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:600;font-size:15px;padding:10px 12px;border-radius:10px;color:var(--ink);margin-bottom:2px}
+.side a:hover{background:#E9EEF3}.side a.on{background:var(--ink);color:#fff}
+.side a:before{content:"";width:9px;height:9px;border-radius:50%;background:var(--c,#9AA5B5);flex:none}
+.side a em{margin-left:auto;font-style:normal;font-size:13px;opacity:.7}
 .item{display:block;text-decoration:none;padding:14px 16px 14px 20px;border-bottom:1px solid var(--line);position:relative;border-left:4px solid transparent}
 .item:hover{background:#F7F9FB}.item.sel{background:#EAF6F5;border-left-color:var(--teal)}
 .item .r1{display:flex;align-items:center;gap:8px}.item .who{font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -135,7 +138,7 @@ textarea{min-height:120px;resize:vertical}
 @media(max-width:860px){
  .u{grid-template-columns:1fr;gap:30px;padding-top:28px}.u .intro{position:static}.u .lead{max-width:none;margin-bottom:22px}
  .track{display:none}.sheet{padding:22px}
- .app{grid-template-columns:1fr;height:auto}.app.has-sel .list{display:none}.app:not(.has-sel) .detail{display:none}
+ .app{grid-template-columns:1fr;height:auto}.app.has-sel .list,.app.has-sel .side{display:none}.side{border-right:0;border-bottom:1px solid var(--line);padding:12px;display:flex;flex-wrap:wrap;gap:6px}.side h4{display:none}.side a{margin:0;padding:7px 12px;font-size:14px;background:#fff;border:1px solid var(--line)}.side a.on{border-color:var(--ink)}.app:not(.has-sel) .detail{display:none}
  .detail{padding:20px 18px 50px}.back{display:inline-block}.bar .sum{display:none}
 }
 @media(prefers-reduced-motion:reduce){.toast{animation:none}}
@@ -227,7 +230,8 @@ def logout():
 DASH = """<div class="bar"><a class="logo" href="/staff"><i>HD</i>Help Desk</a><span class="sp"></span>
 <span class="sum"><b>{{counts['New']}}</b> new &nbsp;·&nbsp; <b>{{open_n}}</b> open</span><a class="out" href="/staff/logout">Log out</a></div>
 <div class="app {{'has-sel' if sel}}">
-<aside class="list"><nav class="tabs">{% for s in ["All"]+statuses %}<a href="/staff?s={{s}}" class="{{'on' if s==cur}}">{{s}}<em>{{total if s=='All' else counts[s]}}</em></a>{% endfor %}</nav>
+<nav class="side"><h4>Requests</h4>{% for s in ["All"]+statuses %}<a href="/staff?s={{s}}" class="{{'on' if s==cur}} {{'s-'+(s|lower|replace(' ','-')) if s!='All'}}">{{s}}<em>{{total if s=='All' else counts[s]}}</em></a>{% endfor %}</nav>
+<aside class="list">
 {% for t in rows %}<a class="item s-{{t.slug}} {{'sel' if sel and sel.id==t.id}} {{'unread' if t.status=='New'}}" href="/staff?s={{cur}}&t={{t.id}}">
 <div class="r1"><span class="pc">{{t.pc}}</span><span class="who">{{t.name}}</span>{% if t.has_image %}<span title="Has photo">📷</span>{% endif %}<span class="ago">{{t.ago}}</span></div>
 <p>{{t.description}}</p></a>
