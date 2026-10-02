@@ -39,79 +39,156 @@ def run(sql, args=(), fetch=False):
 
 BASE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>{{title}}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--ac:#4f46e5;--ac2:#7c3aed;--bg:#f3f4fb;--tx:#1e1b3a;--mu:#6b7280;--bd:#e5e7f0}
+:root{--ink:#0F1B2D;--paper:#EDF0F3;--line:#D9DEE5;--mu:#5B6778;--teal:#0E8F86;--teal2:#0A6B64;--tag:#FFD23F;
+--hd:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;--bd:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
 *{box-sizing:border-box}
-body{margin:0;font:15px/1.55 -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--tx)}
-.top{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;padding:22px 16px 60px}
-.top .in{max-width:880px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:10px}
-.top h1{margin:0;font-size:22px}.top p{margin:2px 0 0;opacity:.85;font-size:14px}
-.top a{color:#fff;opacity:.9;text-decoration:none;font-weight:600;font-size:14px;background:rgba(255,255,255,.18);padding:7px 13px;border-radius:99px}
-.w{max-width:880px;margin:-40px auto 40px;padding:0 16px}
-.c{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:22px;margin-bottom:14px;box-shadow:0 6px 24px rgba(79,70,229,.07)}
-label{display:block;font-weight:600;margin:14px 0 6px;font-size:13.5px}
-input,select,textarea{width:100%;padding:11px 13px;border:1.5px solid var(--bd);border-radius:10px;font:inherit;background:#fbfbfe;color:var(--tx)}
-input:focus,select:focus,textarea:focus{outline:0;border-color:var(--ac);box-shadow:0 0 0 3px rgba(79,70,229,.15)}
-textarea{min-height:130px;resize:vertical}
-button,.btn{display:inline-block;padding:12px 22px;border:0;border-radius:10px;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;font:inherit;font-weight:700;cursor:pointer;text-decoration:none}
-button:hover,.btn:hover{filter:brightness(1.07)}
-.ghost{background:#eef0fb;color:var(--ac)}
-.m{color:var(--mu);font-size:13px}.err{background:#fef2f2;color:#b91c1c;padding:10px 13px;border-radius:10px;margin:12px 0}
-.up{border:2px dashed #c7cae8;border-radius:12px;padding:16px;text-align:center;background:#fbfbfe;cursor:pointer;display:block;color:var(--mu);font-weight:500;margin:0}
-.up:hover{border-color:var(--ac)}.up input{display:none}
-#pv{display:none;max-width:100%;max-height:220px;border-radius:10px;margin-top:10px;border:1px solid var(--bd)}
-.done{text-align:center;padding:30px 20px}.tick{font-size:46px}.tid{font-size:32px;font-weight:800;color:var(--ac);letter-spacing:1px;margin:6px 0}
-.st{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
-.st div{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:14px;text-align:center;box-shadow:0 4px 14px rgba(79,70,229,.06)}
-.st b{display:block;font-size:26px;color:var(--ac)}.st span{color:var(--mu);font-size:12.5px;font-weight:600}
-.pills{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
-.pills a{padding:6px 13px;border-radius:99px;background:#fff;border:1px solid var(--bd);text-decoration:none;color:var(--tx);font-size:13px;font-weight:600}
-.pills a.on{background:var(--ac);color:#fff;border-color:var(--ac)}
-.tk{display:block;text-decoration:none;color:inherit;border-left:5px solid var(--ac);padding:16px 18px}
-.tk:hover{transform:translateY(-1px);box-shadow:0 8px 26px rgba(79,70,229,.14)}
-.row{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-.bd{padding:3px 11px;border-radius:99px;font-size:12px;font-weight:700;white-space:nowrap}
-.s-new{background:#fef3c7;color:#92400e}.s-seen{background:#dbeafe;color:#1e40af}
-.s-under-consideration{background:#ede9fe;color:#5b21b6}.s-in-progress{background:#ffedd5;color:#9a3412}
-.s-resolved{background:#dcfce7;color:#166534}.s-closed{background:#e5e7eb;color:#374151}.s-rejected{background:#fee2e2;color:#991b1b}
-.shot{max-width:100%;border-radius:12px;border:1px solid var(--bd);margin:6px 0 4px}
-.tk.s-new{border-left-color:#f59e0b}.tk.s-seen{border-left-color:#3b82f6}.tk.s-under-consideration{border-left-color:#8b5cf6}
-.tk.s-in-progress{border-left-color:#f97316}.tk.s-resolved{border-left-color:#22c55e}.tk.s-closed{border-left-color:#9ca3af}.tk.s-rejected{border-left-color:#ef4444}
-@media(max-width:560px){.st{grid-template-columns:repeat(2,1fr)}.top h1{font-size:19px}}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 var(--bd)}
+h1,h2,h3{font-family:var(--hd);margin:0;line-height:1.1;letter-spacing:-.02em}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+a{color:inherit}
+.bar{background:var(--ink);color:#fff;padding:12px 20px;display:flex;align-items:center;gap:14px}
+.logo{display:flex;align-items:center;gap:10px;font:800 18px var(--hd);text-decoration:none}
+.logo i{background:var(--tag);color:var(--ink);font-style:normal;padding:3px 8px;border-radius:5px 12px 12px 5px;font-size:14px}
+.bar .sp{flex:1}.bar .sum{font-size:14px;color:#B8C2D1}.bar .sum b{color:#fff}
+.bar a.out{font-size:14px;color:#B8C2D1;text-decoration:none;border:1px solid #33435C;padding:6px 12px;border-radius:8px}
+.bar a.out:hover{color:#fff;border-color:#fff}
+label{display:block;font-weight:600;font-size:14px;margin:0 0 6px}
+input,select,textarea{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;font:inherit;background:#fff;color:var(--ink)}
+input:focus,textarea:focus{border-color:var(--teal);outline:0;box-shadow:0 0 0 4px rgba(14,143,134,.15)}
+textarea{min-height:120px;resize:vertical}
+.btn{display:inline-block;border:0;border-radius:10px;padding:13px 22px;font:600 16px var(--bd);background:var(--teal);color:#fff;cursor:pointer;text-decoration:none;text-align:center}
+.btn:hover{background:var(--teal2)}.btn.big{width:100%;padding:16px;font-size:17px}
+.btn.alt{background:#fff;color:var(--ink);border:1.5px solid var(--line)}.btn.alt:hover{border-color:var(--ink);background:#fff}
+.err{background:#FDECEC;color:#9B1C1C;border-radius:10px;padding:11px 14px;margin-bottom:16px;font-weight:500}
+.m{color:var(--mu);font-size:14px}
+.pc{display:inline-block;background:var(--tag);color:var(--ink);font:800 13px var(--hd);padding:3px 11px 3px 9px;border-radius:4px 12px 12px 4px;letter-spacing:.02em;white-space:nowrap}
+
+/* ---------- user side ---------- */
+.u{max-width:1020px;margin:0 auto;padding:44px 20px 60px;display:grid;grid-template-columns:5fr 6fr;gap:56px;align-items:start}
+.u .intro{position:sticky;top:30px}
+.u h1{font-size:clamp(34px,5vw,54px)}
+.u .lead{font-size:18px;color:var(--mu);margin:18px 0 30px;max-width:30ch}
+.track{list-style:none;margin:0;padding:0;border-left:2px solid var(--line)}
+.track li{position:relative;padding:0 0 18px 22px}.track li:last-child{padding-bottom:0}
+.track li:before{content:"";position:absolute;left:-7px;top:5px;width:12px;height:12px;border-radius:50%;background:var(--paper);border:2px solid #9AA5B5}
+.track li.now:before{background:var(--teal);border-color:var(--teal)}
+.track b{display:block;font-size:15px}.track span{color:var(--mu);font-size:14px}
+.sheet{background:#fff;border-radius:18px;padding:28px;box-shadow:0 1px 0 var(--line),0 24px 48px -28px rgba(15,27,45,.35)}
+.sheet h2{font-size:24px;margin-bottom:20px}
+.f{margin-bottom:20px}
+.tagfield{background:var(--tag);border-radius:8px 22px 22px 8px;padding:14px 18px 16px 22px;position:relative}
+.tagfield:before{content:"";position:absolute;left:8px;top:50%;width:8px;height:8px;margin-top:-4px;border-radius:50%;background:var(--paper)}
+.tagfield label{margin-left:4px}
+.tagfield input{background:#FFF8D6;border-color:#E9BC0F;font:800 22px var(--hd);letter-spacing:.03em;border-radius:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.chip{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:6px 13px;font:500 14px var(--bd);cursor:pointer;color:var(--ink)}
+.chip:hover{border-color:var(--teal);color:var(--teal2)}
+.shotbox{display:flex;align-items:center;gap:14px;border:1.5px dashed #AEB8C6;border-radius:12px;padding:12px;cursor:pointer;margin:0}
+.shotbox:hover{border-color:var(--teal);background:#F4FBFA}
+.shotbox input{display:none}.shotbox .ic{width:48px;height:48px;border-radius:10px;background:var(--paper);display:grid;place-items:center;font-size:22px;flex:none;overflow:hidden}
+.shotbox .ic img{width:100%;height:100%;object-fit:cover}
+.shotbox b{display:block;font-size:15px}
+.rm{background:none;border:0;color:#9B1C1C;font:500 14px var(--bd);cursor:pointer;padding:6px 0;display:none}
+.stub{max-width:560px;margin:0 auto;padding:44px 20px 60px}
+.ticket{background:#fff;border-radius:18px;box-shadow:0 24px 48px -28px rgba(15,27,45,.4);position:relative}
+.ticket .top{padding:30px 28px 26px}.ticket .top .ok{display:inline-block;background:#DDF3F0;color:var(--teal2);font-weight:600;font-size:14px;padding:4px 12px;border-radius:99px;margin-bottom:14px}
+.ticket .no{font:800 clamp(38px,9vw,56px) var(--hd);letter-spacing:-.02em;margin:2px 0 4px}
+.perf{border-top:2px dashed var(--line);position:relative;margin:0 22px}
+.perf:before,.perf:after{content:"";position:absolute;top:-13px;width:24px;height:24px;border-radius:50%;background:var(--paper)}
+.perf:before{left:-34px}.perf:after{right:-34px}
+.ticket .bot{padding:24px 28px 30px}.ticket .bot h3{font-size:18px;margin-bottom:16px}
+
+/* ---------- staff side ---------- */
+.app{display:grid;grid-template-columns:minmax(300px,380px) 1fr;height:calc(100vh - 57px);min-height:480px}
+.list{background:#fff;border-right:1px solid var(--line);overflow:auto;display:flex;flex-direction:column}
+.tabs{display:flex;gap:6px;padding:12px;overflow-x:auto;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;z-index:2}
+.tabs a{flex:none;text-decoration:none;font-size:13.5px;font-weight:600;padding:6px 12px;border-radius:99px;color:var(--mu);background:var(--paper)}
+.tabs a.on{background:var(--ink);color:#fff}.tabs a em{font-style:normal;opacity:.65;margin-left:4px}
+.item{display:block;text-decoration:none;padding:14px 16px 14px 20px;border-bottom:1px solid var(--line);position:relative;border-left:4px solid transparent}
+.item:hover{background:#F7F9FB}.item.sel{background:#EAF6F5;border-left-color:var(--teal)}
+.item .r1{display:flex;align-items:center;gap:8px}.item .who{font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .ago{font-size:12.5px;color:var(--mu);flex:none}
+.item p{margin:6px 0 0;font-size:14px;color:var(--mu);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.item.unread .who{font-weight:800}.item.unread:after{content:"";position:absolute;left:7px;top:22px;width:8px;height:8px;border-radius:50%;background:#E8A700}
+.s-new{--c:#C98900}.s-seen{--c:#2F6FDB}.s-under-consideration{--c:#7A4FD3}.s-in-progress{--c:#D9600B}.s-resolved{--c:#168A45}.s-closed{--c:#6B7685}.s-rejected{--c:#C42B2B}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:3px 11px 3px 9px;border-radius:99px;color:var(--c);background:color-mix(in srgb,var(--c) 13%,#fff);white-space:nowrap}
+.badge:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--c)}
+.detail{overflow:auto;padding:28px 32px 60px}
+.detail .in{max-width:680px}
+.back{display:none;margin-bottom:14px;font-weight:600;text-decoration:none;color:var(--teal2)}
+.dh{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.dh h2{font-size:30px;margin:10px 0 2px}
+.body{background:#fff;border-radius:14px;padding:20px 22px;margin:22px 0;border:1px solid var(--line);font-size:17px;white-space:pre-wrap}
+.shot{max-width:100%;border-radius:12px;border:1px solid var(--line);display:block}
+.sec{font:600 14px var(--bd);margin:26px 0 10px}
+.sbtns{display:flex;flex-wrap:wrap;gap:8px}
+.sb{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:9px 14px;font:600 14px var(--bd);cursor:pointer;color:var(--ink)}
+.sb:hover{border-color:var(--c);color:var(--c)}.sb.on{background:var(--c);border-color:var(--c);color:#fff}
+.empty{display:grid;place-items:center;height:100%;text-align:center;color:var(--mu);padding:30px}
+.empty h3{color:var(--ink);font-size:22px;margin-bottom:8px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 20px;border-radius:99px;font-weight:600;animation:out 3.2s forwards;z-index:9}
+@keyframes out{0%,80%{opacity:1}100%{opacity:0;visibility:hidden}}
+.login{max-width:400px;margin:12vh auto;padding:0 20px}.login .sheet{padding:28px}
+@media(max-width:860px){
+ .u{grid-template-columns:1fr;gap:30px;padding-top:28px}.u .intro{position:static}.u .lead{max-width:none;margin-bottom:22px}
+ .track{display:none}.sheet{padding:22px}
+ .app{grid-template-columns:1fr;height:auto}.app.has-sel .list{display:none}.app:not(.has-sel) .detail{display:none}
+ .detail{padding:20px 18px 50px}.back{display:inline-block}.bar .sum{display:none}
+}
+@media(prefers-reduced-motion:reduce){.toast{animation:none}}
 </style></head><body>{{ body|safe }}</body></html>"""
 
 def page(title, body, **kw):
     return render_template_string(BASE, title=title, body=render_template_string(body, **kw))
 
+slug = lambda s: s.lower().replace(" ", "-")
+def ago(ts):
+    d = max(0, time.time() - ts)
+    if d < 60: return "just now"
+    if d < 3600: return f"{int(d // 60)} min ago"
+    if d < 86400: return f"{int(d // 3600)} h ago"
+    return f"{int(d // 86400)} d ago"
+fmt = lambda ts: time.strftime("%d %b %Y, %H:%M", time.gmtime(ts)) + " UTC"
+
 # ---------------- Public complaint page ----------------
-FORM = """<div class="top"><div class="in"><div><h1>🛠️ Help Desk</h1><p>Report a problem and our team will get to it.</p></div></div></div>
-<div class="w"><div class="c">
-<b style="font-size:17px">Submit a request</b>
+FORM = """<div class="bar"><a class="logo" href="/"><i>HD</i>Help Desk</a></div>
+<main class="u"><div class="intro"><h1>Something wrong with your PC?</h1>
+<p class="lead">Tell us what happened. Our team picks it up and fixes it.</p>
+<ul class="track"><li class="now"><b>You send the request</b><span>Takes about a minute</span></li>
+<li><b>We open it</b><span>Your request is marked as seen</span></li><li><b>We fix it</b><span>Usually the same day</span></li></ul></div>
+<form class="sheet" method="post"><h2>New request</h2>
 {% if err %}<div class="err">{{err}}</div>{% endif %}
-<form method="post" id="f">
-<label>Your name *</label><input name="name" value="{{v.name}}" placeholder="e.g. Ali Khan" required>
-<label>PC number *</label><input name="pc" value="{{v.pc}}" placeholder="e.g. PC-12" required>
-<label>Describe your problem *</label><textarea name="description" placeholder="Tell us what is happening..." required>{{v.description}}</textarea>
-<label>Photo (optional)</label>
-<label class="up" for="file">📷 Tap to add a photo or screenshot<input type="file" id="file" accept="image/*"></label>
-<img id="pv" alt="preview"><p><button type="button" class="ghost" id="rm" style="display:none;padding:7px 14px">Remove photo</button></p>
-<input type="hidden" name="image" id="img">
-<p><button>Submit request</button></p></form></div></div>
+<div class="f tagfield"><label for="pc">PC number</label><input id="pc" name="pc" value="{{v.pc}}" placeholder="PC-12" required autocomplete="off"></div>
+<div class="f"><label for="nm">Your name</label><input id="nm" name="name" value="{{v.name}}" placeholder="e.g. Ali Khan" required></div>
+<div class="f"><label for="ds">What is the problem?</label>
+<div class="chips">{% for c in ["Won't turn on","No internet","Very slow","Printer problem","Can't log in","Screen or keyboard"] %}<button type="button" class="chip">{{c}}</button>{% endfor %}</div>
+<textarea id="ds" name="description" placeholder="Describe what you see or what happens..." required>{{v.description}}</textarea></div>
+<div class="f"><label class="shotbox" for="file"><span class="ic" id="ic">📷</span><span><b id="sb">Add a photo or screenshot</b><span class="m">Optional. It helps us fix things faster.</span></span>
+<input type="file" id="file" accept="image/*"></label><button type="button" class="rm" id="rm">Remove photo</button></div>
+<input type="hidden" name="image" id="img"><button class="btn big">Send request</button></form></main>
 <script>
-var file=document.getElementById("file"),pv=document.getElementById("pv"),img=document.getElementById("img"),rm=document.getElementById("rm");
+var d=document.getElementById("ds");
+document.querySelectorAll(".chip").forEach(function(c){c.onclick=function(){var t=c.textContent;
+if(d.value.indexOf(t)>-1)return;d.value=d.value.trim()?d.value.trim()+". "+t:t;d.focus();};});
+var file=document.getElementById("file"),img=document.getElementById("img"),ic=document.getElementById("ic"),sb=document.getElementById("sb"),rm=document.getElementById("rm");
 file.onchange=function(){var f=file.files[0];if(!f)return;var r=new FileReader();
-r.onload=function(e){var im=new Image();im.onload=function(){
-var s=Math.min(1,1100/Math.max(im.width,im.height)),c=document.createElement("canvas");
+r.onload=function(e){var im=new Image();im.onload=function(){var s=Math.min(1,1100/Math.max(im.width,im.height)),c=document.createElement("canvas");
 c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext("2d").drawImage(im,0,0,c.width,c.height);
-var d=c.toDataURL("image/jpeg",0.78);img.value=d;pv.src=d;pv.style.display="block";rm.style.display="inline-block";};im.src=e.target.result;};
+var u=c.toDataURL("image/jpeg",0.78);img.value=u;ic.innerHTML='<img alt="" src="'+u+'">';sb.textContent="Photo added";rm.style.display="block";};im.src=e.target.result;};
 r.readAsDataURL(f);};
-rm.onclick=function(){img.value="";file.value="";pv.style.display="none";rm.style.display="none";};
+rm.onclick=function(){img.value="";file.value="";ic.textContent="📷";sb.textContent="Add a photo or screenshot";rm.style.display="none";};
 </script>"""
 
-DONE = """<div class="top"><div class="in"><div><h1>🛠️ Help Desk</h1></div></div></div>
-<div class="w"><div class="c done"><div class="tick">✅</div><b style="font-size:18px">Request received</b>
-<p class="m">Your ticket number is</p><div class="tid">{{tid}}</div>
-<p class="m">Please keep this number. Our team has been notified.</p><a class="btn" href="/">Submit another request</a></div></div>"""
+DONE = """<div class="bar"><a class="logo" href="/"><i>HD</i>Help Desk</a></div>
+<main class="stub"><div class="ticket"><div class="top"><span class="ok">Request sent</span>
+<div class="m">Your ticket number</div><div class="no">{{tid}}</div><span class="pc">{{pc}}</span> <span class="m">&nbsp;{{name}}</span></div>
+<div class="perf"></div><div class="bot"><h3>What happens next</h3>
+<ul class="track"><li class="now"><b>Request received</b><span>Our team has been notified</span></li>
+<li><b>We open it</b><span>Your request is marked as seen</span></li><li><b>We fix it</b><span>Keep your ticket number if you need to ask about it</span></li></ul>
+<p style="margin:26px 0 0"><a class="btn alt" href="/">Send another request</a></p></div></div></main>"""
 
 @app.route("/", methods=["GET", "POST"])
 def complaint():
@@ -119,25 +196,24 @@ def complaint():
     if request.method == "POST":
         v = {k: request.form.get(k, "").strip()[:2000] for k in v}
         if not all(v.values()):
-            return page("Help Desk", FORM, v=v, err="Please fill in your name, PC number and problem.")
+            return page("Help Desk", FORM, v=v, err="Add your PC number, your name and a short description of the problem.")
         img = request.form.get("image", "")
         if not (img.startswith("data:image/jpeg;base64,") and len(img) <= MAX_IMG):
             img = ""
         tid = "HD-" + secrets.token_hex(3).upper()
         run("INSERT INTO tickets(id,name,pc,description,image,created,updated) VALUES(?,?,?,?,?,?,?)",
             (tid, v["name"], v["pc"], v["description"], img or None, time.time(), time.time()))
-        return page("Request received", DONE, tid=tid)
+        return page("Request sent", DONE, tid=tid, pc=v["pc"], name=v["name"])
     return page("Help Desk", FORM, v=v, err=None)
 
 # ---------------- Staff area ----------------
 def staff_only():
     if not session.get("staff"): abort(redirect("/staff/login"))
 
-LOGIN = """<div class="top"><div class="in"><div><h1>🔒 Staff login</h1><p>Help Desk team only</p></div></div></div>
-<div class="w"><div class="c" style="max-width:420px;margin:0 auto"><form method="post">
-{% if err %}<div class="err">{{err}}</div>{% endif %}
-<label style="margin-top:0">Password</label><input type="password" name="password" autofocus>
-<p><button style="width:100%">Log in</button></p></form></div></div>"""
+LOGIN = """<div class="login"><a class="logo" href="/staff" style="color:var(--ink);margin-bottom:18px"><i>HD</i>Help Desk team</a>
+<form class="sheet" method="post"><h2>Log in</h2>{% if err %}<div class="err">{{err}}</div>{% endif %}
+<div class="f"><label for="pw">Team password</label><input id="pw" type="password" name="password" autofocus></div>
+<button class="btn big">Open dashboard</button></form></div>"""
 
 @app.route("/staff/login", methods=["GET", "POST"])
 def login():
@@ -145,60 +221,66 @@ def login():
     if request.method == "POST":
         if secrets.compare_digest(request.form.get("password", ""), STAFF_PASSWORD):
             session["staff"] = True; return redirect("/staff")
-        err = "Wrong password."
+        err = "That password is not correct. Try again."
     return page("Staff login", LOGIN, err=err)
 
 @app.route("/staff/logout")
 def logout():
     session.clear(); return redirect("/staff/login")
 
-DASH = """<meta http-equiv="refresh" content="30">
-<div class="top"><div class="in"><div><h1>🛠️ Staff Dashboard</h1><p>New complaints appear at the top</p></div><a href="/staff/logout">Log out</a></div></div>
-<div class="w"><div class="st">{% for k,n in stats %}<div><b>{{n}}</b><span>{{k}}</span></div>{% endfor %}</div>
-<div class="pills">{% for s in ["All"]+statuses %}<a href="/staff?s={{s}}" class="{{'on' if s==cur}}">{{s}}</a>{% endfor %}</div>
-{% for t in rows %}<a class="c tk s-{{t.slug}}" href="/staff/ticket/{{t.id}}"><div class="row"><div>
-<b>{{t.id}}</b> · PC {{t.pc}} · {{t.name}} {% if t.has_image %}📷{% endif %}
-<div class="m">{{t.when}}</div><div style="margin-top:5px">{{t.description[:110]}}{{'…' if t.description|length>110}}</div></div>
-<span class="bd s-{{t.slug}}">{{t.status}}</span></div></a>
-{% else %}<div class="c m" style="text-align:center">No requests here yet.</div>{% endfor %}</div>"""
-
-slug = lambda s: s.lower().replace(" ", "-")
-fmt = lambda ts: time.strftime("%d %b %Y, %H:%M", time.gmtime(ts)) + " UTC"
+DASH = """<div class="bar"><a class="logo" href="/staff"><i>HD</i>Help Desk</a><span class="sp"></span>
+<span class="sum"><b>{{counts['New']}}</b> new &nbsp;·&nbsp; <b>{{open_n}}</b> open</span><a class="out" href="/staff/logout">Log out</a></div>
+<div class="app {{'has-sel' if sel}}">
+<aside class="list"><nav class="tabs">{% for s in ["All"]+statuses %}<a href="/staff?s={{s}}" class="{{'on' if s==cur}}">{{s}}<em>{{total if s=='All' else counts[s]}}</em></a>{% endfor %}</nav>
+{% for t in rows %}<a class="item s-{{t.slug}} {{'sel' if sel and sel.id==t.id}} {{'unread' if t.status=='New'}}" href="/staff?s={{cur}}&t={{t.id}}">
+<div class="r1"><span class="pc">{{t.pc}}</span><span class="who">{{t.name}}</span>{% if t.has_image %}<span title="Has photo">📷</span>{% endif %}<span class="ago">{{t.ago}}</span></div>
+<p>{{t.description}}</p></a>
+{% else %}<div class="empty"><div><h3>Nothing here</h3>{{'New requests appear here as soon as someone sends the form.' if total==0 else 'No requests with this status.'}}</div></div>{% endfor %}</aside>
+<section class="detail">{% if sel %}<div class="in"><a class="back" href="/staff?s={{cur}}">← All requests</a>
+<div class="dh"><div><span class="pc" style="font-size:16px">{{sel.pc}}</span><h2>{{sel.name}}</h2><div class="m">{{sel.id}} · {{when}}</div></div>
+<span class="badge s-{{sslug}}">{{sel.status}}</span></div>
+<div class="body">{{sel.description}}</div>
+{% if sel.image %}<a href="{{sel.image}}" target="_blank"><img class="shot" src="{{sel.image}}" alt="Photo from the user"></a>{% endif %}
+<form method="post" action="/staff/ticket/{{sel.id}}?s={{cur}}"><div class="sec">Set status</div>
+<div class="sbtns">{% for s in statuses %}<button name="status" value="{{s}}" class="sb s-{{s|lower|replace(' ','-')}} {{'on' if s==sel.status}}">{{s}}</button>{% endfor %}</div>
+<div class="sec">Team notes <span class="m">(only staff can see these)</span></div>
+<textarea name="notes" id="notes" placeholder="What did you check? What is left to do?">{{sel.notes}}</textarea>
+<p><button name="status" value="{{sel.status}}" class="btn">Save notes</button></p></form></div>
+{% else %}<div class="empty"><div><h3>Pick a request</h3>Select one on the left. It is marked as seen when you open it.</div></div>{% endif %}</section></div>
+{% if saved %}<div class="toast">Changes saved</div>{% endif %}
+<script>var n=document.getElementById("notes"),o=n?n.value:"";
+setInterval(function(){if(document.hidden)return;if(n&&(n.value!==o||document.activeElement===n))return;location.reload();},30000);</script>"""
 
 @app.route("/staff")
 def dashboard():
     staff_only()
-    cur = request.args.get("s", "All")
-    allt = run("""SELECT id,name,pc,description,status,notes,created,
+    cur = request.args.get("s", "All"); tid = request.args.get("t", ""); sel = None
+    if tid:
+        r = run("SELECT * FROM tickets WHERE id=?", (tid,), fetch=True)
+        if r:
+            sel = r[0]
+            if sel["status"] == "New":
+                run("UPDATE tickets SET status='Seen',updated=? WHERE id=?", (time.time(), tid)); sel["status"] = "Seen"
+    allt = run("""SELECT id,name,pc,description,status,created,
                   (image IS NOT NULL AND image <> '') AS has_image FROM tickets ORDER BY created DESC""", fetch=True)
-    rows = [dict(t, when=fmt(t["created"]), slug=slug(t["status"])) for t in allt if cur in ("All", t["status"])]
-    n = lambda f: sum(1 for t in allt if f(t))
-    stats = [("New", n(lambda t: t["status"] == "New")),
-             ("Open", n(lambda t: t["status"] not in ("Resolved", "Closed", "Rejected"))),
-             ("Resolved", n(lambda t: t["status"] == "Resolved")), ("Total", len(allt))]
-    return page("Staff Dashboard", DASH, rows=rows, stats=stats, statuses=STATUSES, cur=cur)
-
-TICKET = """<div class="top"><div class="in"><div><h1>{{t.id}}</h1><p>PC {{t.pc}} · {{t.name}}</p></div><a href="/staff">← Back</a></div></div>
-<div class="w"><div class="c"><div class="row"><span class="m">{{when}}</span><span class="bd s-{{slug}}">{{t.status}}</span></div>
-<p style="white-space:pre-wrap;font-size:16px">{{t.description}}</p>
-{% if t.image %}<a href="{{t.image}}" target="_blank"><img class="shot" src="{{t.image}}" alt="attached photo"></a><div class="m">Tap the photo to open it full size</div>{% endif %}
-<form method="post"><label>Status</label><select name="status">{% for s in statuses %}<option {{'selected' if s==t.status}}>{{s}}</option>{% endfor %}</select>
-<label>Internal notes (visible to all staff, not to users)</label><textarea name="notes">{{t.notes}}</textarea>
-<p><button>Save changes</button></p></form></div></div>"""
+    counts = {s: 0 for s in STATUSES}
+    for t in allt: counts[t["status"]] = counts.get(t["status"], 0) + 1
+    rows = [dict(t, ago=ago(t["created"]), slug=slug(t["status"])) for t in allt if cur in ("All", t["status"])]
+    open_n = sum(v for k, v in counts.items() if k not in ("Resolved", "Closed", "Rejected"))
+    return page("Staff dashboard", DASH, rows=rows, counts=counts, total=len(allt), open_n=open_n, statuses=STATUSES,
+                cur=cur, sel=sel, when=fmt(sel["created"]) if sel else "", sslug=slug(sel["status"]) if sel else "",
+                saved=request.args.get("saved"))
 
 @app.route("/staff/ticket/<tid>", methods=["GET", "POST"])
 def ticket(tid):
     staff_only()
-    r = run("SELECT * FROM tickets WHERE id=?", (tid,), fetch=True)
-    if not r: abort(404)
-    t = r[0]
+    cur = request.args.get("s", "All")
     if request.method == "POST":
-        st = request.form.get("status"); st = st if st in STATUSES else t["status"]
-        run("UPDATE tickets SET status=?,notes=?,updated=? WHERE id=?", (st, request.form.get("notes", "")[:5000], time.time(), tid))
-        return redirect("/staff")
-    if t["status"] == "New":
-        run("UPDATE tickets SET status='Seen',updated=? WHERE id=?", (time.time(), tid)); t["status"] = "Seen"
-    return page(tid, TICKET, t=t, statuses=STATUSES, when=fmt(t["created"]), slug=slug(t["status"]))
+        st = request.form.get("status")
+        if st in STATUSES:
+            run("UPDATE tickets SET status=?,notes=?,updated=? WHERE id=?", (st, request.form.get("notes", "")[:5000], time.time(), tid))
+        return redirect(f"/staff?s={cur}&t={tid}&saved=1")
+    return redirect(f"/staff?s={cur}&t={tid}")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
